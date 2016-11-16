@@ -1,5 +1,5 @@
 """
-basic_plot.py
+basic_read_plot.py
 
 reads a shapefile using the shapefile library, loops over imported shapes 
 and plots the points defining each shape. 
@@ -93,7 +93,6 @@ for shape in list(sf.iterShapes()):
 
     else: # loop over parts of each shape, plot separately
         for ip in range(nparts): # loop over parts, plot separately
-            # won't loop if nparts = 1
             i0=shape.parts[ip]
             if ip < nparts-1:
                i1 = shape.parts[ip+1]-1
