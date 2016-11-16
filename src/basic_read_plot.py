@@ -24,9 +24,9 @@ import shapefile
 import numpy as np
 import matplotlib.pyplot as plt
 
-########################
-# IMPORT THE SHAPEFILE #
-########################
+"""
+ IMPORT THE SHAPEFILE 
+"""
 shp_file_base='cb_2015_us_state_20m'
 dat_dir='../shapefiles/'+shp_file_base +'/'
 sf = shapefile.Reader(dat_dir+shp_file_base)
@@ -38,14 +38,11 @@ for name in dir(sf.shape()):
     if not name.startswith('__'):
        print name
 
-#############################3
-#       PLOTTING
-#############################3
+"""
+       PLOTTING
+"""
 
-
-########################
-# PLOTS A SINGLE SHAPE #
-########################
+""" PLOTS A SINGLE SHAPE """
 plt.figure()
 ax = plt.axes()
 ax.set_aspect('equal')
@@ -61,9 +58,7 @@ plt.plot(x_lon,y_lat,'k')
 # use bbox (bounding box) to set plot limits
 plt.xlim(shape_ex.bbox[0],shape_ex.bbox[2])
 
-########################
-# PLOTS ALL SHAPES     #
-########################
+""" PLOTS ALL SHAPES """
 plt.figure()
 ax = plt.axes()
 ax.set_aspect('equal')
@@ -79,9 +74,7 @@ plt.xlim(-130,-60)
 plt.ylim(23,50)
 
 
-##############################
-# PLOTS ALL SHAPES AND PARTS #
-##############################
+""" PLOTS ALL SHAPES AND PARTS """
 plt.figure()
 ax = plt.axes() # add the axes
 ax.set_aspect('equal')
