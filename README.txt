@@ -34,7 +34,9 @@ DESCRIPTION
 
 REQUIRED PYTHON LIBRARIES
 
-   numpy, matplotlib, shapefile (in pyshp)
+   numpy, matplotlib, pyshp
+
+   for scripts with polygons: shapely, descartes
 
 QUICK START
    1. Download and unzip a shapefile from:
