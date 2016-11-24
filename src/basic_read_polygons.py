@@ -56,11 +56,10 @@ for ip in range(len(shape_ex.points)):
     y_lat[ip] = shape_ex.points[ip][1]
 
 plt.plot(x_lon,y_lat,'k') 
-
 # build the polygon from exterior points
-# (will break if using a different state)
+# (will break if using a different state that has islands)
 polygon = Polygon(shape_ex.points)
-patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[1,1,1], alpha=1.0, zorder=2)
+patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[0,0,0], alpha=1.0, zorder=2)
 ax.add_patch(patch)
 
 # use bbox (bounding box) to set plot limits
@@ -86,7 +85,6 @@ for shape in list(sf.iterShapes()):
         for ip in range(len(shape.points)):
             x_lon[ip] = shape.points[ip][0]
             y_lat[ip] = shape.points[ip][1]
-        plt.plot(x_lon,y_lat,color=(R,G,B)) 
         polygon = Polygon(shape.points)
         patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
         ax.add_patch(patch)
@@ -106,7 +104,6 @@ for shape in list(sf.iterShapes()):
                 x_lon[ip] = seg[ip][0]
                 y_lat[ip] = seg[ip][1]
             
-            plt.plot(x_lon,y_lat,color=(R,G,B)) 
             polygon = Polygon(shape.points[i0:i1+1])
             patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
             ax.add_patch(patch)
