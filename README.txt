@@ -34,8 +34,8 @@ DESCRIPTION
 
 REQUIRED PYTHON LIBRARIES
 
-   numpy, matplotlib, pyshp
-
+   general libraries: numpy, matplotlib
+   for reading shapefiles: pyshp
    for scripts with polygons: shapely, descartes
 
 QUICK START
@@ -48,7 +48,12 @@ QUICK START
    3. run basic_read_plot.py from a terminal window: 
            $ cd /path/to/learning_shapefiles/src/
            $ python basic_read_plot.py
-   
+CONTENTS
+   scripts in src/ include: 
 
-
-
+   basic_read_plot.py
+         reads a shapefile, plots outlines of geometry 
+   basic_readshp_plotpoly.py 
+         reads a shapefile, plots geometry using polygons
+   simple_polygons.py
+         plots several simple polygons
