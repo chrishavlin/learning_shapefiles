@@ -69,6 +69,7 @@ elif shape == 'pacman':
     inter = list()
 
 elif shape == 'pacman_rough':
+#   pacman shape with random roughness added to bounding points
     theta = np.linspace(0.25*3.14,1.75*3.14,80)
 
     # add random perturbation
@@ -115,6 +116,7 @@ elif shape == 'pacman_rough_eye':
     inter = list()
     for itheta in range(len(theta)):
         inter.append((x[itheta],y[itheta]))
+    inter.append((x[0],y[0]))
 
 
 if len(inter) == 0: 
@@ -122,7 +124,7 @@ if len(inter) == 0:
     polygon = Polygon(ext)
 else:
     # include interior points?
-    polygon = Polygon(ext,[inter])
+    polygon = Polygon(ext,[inter[::-1]])
 
 # put the patch on the plot
 patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[1,1,1], alpha=1.0, zorder=2)
