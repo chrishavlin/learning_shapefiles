@@ -21,10 +21,6 @@ import numpy as np
 from shapely.geometry import Polygon
 from descartes.patch import PolygonPatch
 
-# initialize figure and axes
-fig = plt.figure()
-ax = fig.add_axes((0.1,0.1,0.8,0.8))
-
 # choose which shape to plot
 shape = 'pacman_rough_eye'
 # available shapes:
@@ -34,97 +30,105 @@ shape = 'pacman_rough_eye'
 #       'pacman_rough'
 #       'pacman_rough_eye'
 
+
 # define points of shape
 if shape == 'square':
+   # square
    ext = [(0, 0), (0, 1), (1, 1), (1, 0), (0, 0)] # exterior points
 
 elif shape == 'unit_circle':
-    theta = np.linspace(0,2*3.14,50)
-    x = np.cos(theta)
-    y = np.sin(theta)
-    
-    # build the list of points
-    ext = list()
-    
-    # loop over x,y, add each point to list
-    for itheta in range(len(theta)):
-        ext.append((x[itheta],y[itheta]))
-    
-    ext.append((x[0],y[0]))    
-    inter = list()
+   # unit circle
+   theta = np.linspace(0,2*3.14,50)
+   x = np.cos(theta)
+   y = np.sin(theta)
+   
+   # build the list of points
+   ext = list()
+   
+   # loop over x,y, add each point to list
+   for itheta in range(len(theta)):
+       ext.append((x[itheta],y[itheta]))
+   
+   ext.append((x[0],y[0]))    
+   inter = list()
 
 elif shape == 'pacman':
-    theta = np.linspace(0.25*3.14,1.75*3.14,50)
-    x = np.cos(theta)
-    y = np.sin(theta)
-    
-    # build the list of points
-    ext = list()
-    
-    # loop over x,y, add each point to list
-    for itheta in range(len(theta)):
-        ext.append((x[itheta],y[itheta]))
-    
-    ext.append((0,0))    
-    inter = list()
+   # pacman shape!
+   theta = np.linspace(0.25*3.14,1.75*3.14,50)
+   x = np.cos(theta)
+   y = np.sin(theta)
+   
+   # build the list of points
+   ext = list()
+   
+   # loop over x,y, add each point to list
+   for itheta in range(len(theta)):
+       ext.append((x[itheta],y[itheta]))
+   
+   ext.append((0,0))    
+   inter = list()
 
 elif shape == 'pacman_rough':
-#   pacman shape with random roughness added to bounding points
-    theta = np.linspace(0.25*3.14,1.75*3.14,80)
+   # pacman shape with random roughness added to bounding points
+   theta = np.linspace(0.25*3.14,1.75*3.14,80)
 
-    # add random perturbation
-    max_rough=0.05
-    pert=max_rough * np.random.rand(len(theta))
+   # add random perturbation
+   max_rough=0.05
+   pert=max_rough * np.random.rand(len(theta))
 
-    x = np.cos(theta)+pert
-    y = np.sin(theta)+pert
-    
-    # build the list of points
-    ext = list()
-    
-    # loop over x,y, add each point to list
-    for itheta in range(len(theta)):
-        ext.append((x[itheta],y[itheta]))
-    
-    ext.append((0,0))    
-    inter = list()
+   x = np.cos(theta)+pert
+   y = np.sin(theta)+pert
+   
+   # build the list of points
+   ext = list()
+   
+   # loop over x,y, add each point to list
+   for itheta in range(len(theta)):
+       ext.append((x[itheta],y[itheta]))
+   
+   ext.append((0,0))    
+   inter = list()
 
 elif shape == 'pacman_rough_eye':
-    theta = np.linspace(0.25*3.14,1.75*3.14,80)
+   theta = np.linspace(0.25*3.14,1.75*3.14,80)
 
-    # add random perturbation
-    max_rough=0.05
-    pert=max_rough * np.random.rand(len(theta))
+   # add random perturbation
+   max_rough=0.05
+   pert=max_rough * np.random.rand(len(theta))
 
-    x = np.cos(theta)+pert
-    y = np.sin(theta)+pert
-    
-    # build the list of points
-    ext = list()
-    
-    # loop over x,y, add each point to list
-    for itheta in range(len(theta)):
-        ext.append((x[itheta],y[itheta]))
-    
-    ext.append((0,0))    
+   x = np.cos(theta)+pert
+   y = np.sin(theta)+pert
+   
+   # build the list of points
+   ext = list()
+   
+   # loop over x,y, add each point to list
+   for itheta in range(len(theta)):
+       ext.append((x[itheta],y[itheta]))
+   
+   ext.append((0,0))    
 
-    # build eyeball interior points
-    theta=np.linspace(0,2*3.14,30)
-    x = 0.1*np.cos(theta)+0.2
-    y = 0.1*np.sin(theta)+0.7
+   # build eyeball interior points
+   theta=np.linspace(0,2*3.14,30)
+   x = 0.1*np.cos(theta)+0.2
+   y = 0.1*np.sin(theta)+0.7
 
-    inter = list()
-    for itheta in range(len(theta)):
-        inter.append((x[itheta],y[itheta]))
-    inter.append((x[0],y[0]))
+   inter = list()
+   for itheta in range(len(theta)):
+       inter.append((x[itheta],y[itheta]))
+   inter.append((x[0],y[0]))
 
 
 if len(inter) == 0: 
-    # build the polygon from exterior points
-    polygon = Polygon(ext)
+   # build the polygon from exterior points
+   polygon = Polygon(ext)
 else:
-    # include interior points?
-    polygon = Polygon(ext,[inter[::-1]])
+   # include interior points
+   polygon = Polygon(ext,[inter[::-1]])
+
+# initialize figure and axes
+fig = plt.figure()
+ax = fig.add_axes((0.1,0.1,0.8,0.8))
 
 # put the patch on the plot
 patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[1,1,1], alpha=1.0, zorder=2)

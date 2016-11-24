@@ -48,23 +48,17 @@ for name in dir(sf.shape()):
 plt.figure()
 ax = plt.axes()
 ax.set_aspect('equal')
-shape_ex = sf.shape(5)
-x_lon = np.zeros((len(shape_ex.points),1))
-y_lat = np.zeros((len(shape_ex.points),1))
-for ip in range(len(shape_ex.points)):
-    x_lon[ip] = shape_ex.points[ip][0]
-    y_lat[ip] = shape_ex.points[ip][1]
 
-plt.plot(x_lon,y_lat,'k') 
+shape_ex = sf.shape(5) # could break if selected shape has multiple polygons. 
+
 # build the polygon from exterior points
-# (will break if using a different state that has islands)
 polygon = Polygon(shape_ex.points)
-patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[0,0,0], alpha=1.0, zorder=2)
+patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[0,0,0], alpha=0.7, zorder=2)
 ax.add_patch(patch)
 
 # use bbox (bounding box) to set plot limits
 plt.xlim(shape_ex.bbox[0],shape_ex.bbox[2])
-plt.show()
+plt.ylim(shape_ex.bbox[1],shape_ex.bbox[3])
 
 """ PLOTS ALL SHAPES AND PARTS """
 plt.figure()
@@ -73,18 +67,15 @@ ax.set_aspect('equal')
 
 icolor = 1
 for shape in list(sf.iterShapes()):
-    npoints=len(shape.points) # total points
-    nparts = len(shape.parts) # total parts
 
+    # define polygon fill color (facecolor) RGB values:
     R = (float(icolor)-1.0)/52.0
     G = 0 
     B = 0 
+
+    # check number of parts (could use MultiPolygon class of shapely?)
+    nparts = len(shape.parts) # total parts
     if nparts == 1:
-        x_lon = np.zeros((len(shape.points),1))
-        y_lat = np.zeros((len(shape.points),1))
-        for ip in range(len(shape.points)):
-            x_lon[ip] = shape.points[ip][0]
-            y_lat[ip] = shape.points[ip][1]
         polygon = Polygon(shape.points)
         patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
         ax.add_patch(patch)
@@ -95,14 +86,7 @@ for shape in list(sf.iterShapes()):
             if ip < nparts-1:
                i1 = shape.parts[ip+1]-1
             else:
-               i1 = npoints
-            
-            seg=shape.points[i0:i1+1]
-            x_lon = np.zeros((len(seg),1))
-            y_lat = np.zeros((len(seg),1))
-            for ip in range(len(seg)):
-                x_lon[ip] = seg[ip][0]
-                y_lat[ip] = seg[ip][1]
+               i1 = len(shape.points)
             
             polygon = Polygon(shape.points[i0:i1+1])
             patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
