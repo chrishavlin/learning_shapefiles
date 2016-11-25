@@ -57,3 +57,8 @@ CONTENTS
          reads a shapefile, plots geometry using polygons
    simple_polygons.py
          plots several simple polygons
+   read_shp_and_rcrd.py
+         reads a shapefile, plots geometry using polygons colored 
+         by record values. The record indexing is specific to the 
+         census.gov State Boundaries shapefile.
+

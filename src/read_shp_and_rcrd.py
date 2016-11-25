@@ -40,44 +40,56 @@ for name in dir(sf.shape()):
     if not name.startswith('__'):
        print name
 
+
+
 """
        PLOTTING
 """
 
-""" PLOTS A SINGLE SHAPE """
-plt.figure()
-ax = plt.axes()
-ax.set_aspect('equal')
+"""    Find max/min of record of interest (for scaling the facecolor)"""
 
-shape_ex = sf.shape(5) # could break if selected shape has multiple polygons. 
+# get list of field names, pull out appropriate index
+# fieldnames of interest: ALAND, AWATER are land and water area, respectively
+fld = sf.fields[1:]
+field_names = [field[0] for field in fld]
+fld_name='ALAND'
+fld_ndx=field_names.index(fld_name)
 
-# build the polygon from exterior points
-polygon = Polygon(shape_ex.points)
-patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[0,0,0], alpha=0.7, zorder=2)
-ax.add_patch(patch)
+# loop over records, track global min/max
+maxrec=-9999
+minrec=1e21
+for rec in sf.iterRecords():
+    if rec[4] != 'AK': # exclude alaska so the scale isn't skewed
+       maxrec=np.max((maxrec,rec[fld_ndx]))
+       minrec=np.min((minrec,rec[fld_ndx]))
 
-# use bbox (bounding box) to set plot limits
-plt.xlim(shape_ex.bbox[0],shape_ex.bbox[2])
-plt.ylim(shape_ex.bbox[1],shape_ex.bbox[3])
+print fld_name,'min:',minrec,'max:',maxrec    
 
 """ PLOTS ALL SHAPES AND PARTS """
 plt.figure()
 ax = plt.axes() # add the axes
 ax.set_aspect('equal')
 
-icolor = 1
-for shape in list(sf.iterShapes()):
+for shapeRec in sf.iterShapeRecords():
+    # pull out shape geometry and records
+    shape=shapeRec.shape 
+    rec = shapeRec.record 
 
-    # define polygon fill color (facecolor) RGB values:
-    R = (float(icolor)-1.0)/52.0
-    G = 0 
-    B = 0 
+    # select polygon facecolor RGB vals based on record value
+    if rec[4] != 'AK':
+       R = 1
+       G = (rec[fld_ndx]-minrec)/(maxrec-minrec)
+       B = 0
+    else: 
+       R = 0
+       B = 0 
+       G = 0 
 
     # check number of parts (could use MultiPolygon class of shapely?)
     nparts = len(shape.parts) # total parts
     if nparts == 1:
         polygon = Polygon(shape.points)
-        patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+        patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[0,0,0], alpha=1.0, zorder=2)
         ax.add_patch(patch)
 
     else: # loop over parts of each shape, plot separately
@@ -87,12 +99,11 @@ for shape in list(sf.iterShapes()):
                i1 = shape.parts[ip+1]-1
             else:
                i1 = len(shape.points)
-            
+
+            # build the polygon and add it to plot   
             polygon = Polygon(shape.points[i0:i1+1])
             patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
             ax.add_patch(patch)
-
-    icolor = icolor + 1
 
 plt.xlim(-130,-60)
 plt.ylim(23,50)
