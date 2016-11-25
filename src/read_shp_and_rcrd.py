@@ -63,6 +63,8 @@ for rec in sf.iterRecords():
        maxrec=np.max((maxrec,rec[fld_ndx]))
        minrec=np.min((minrec,rec[fld_ndx]))
 
+maxrec=maxrec/2.0 # upper saturation limit
+
 print fld_name,'min:',minrec,'max:',maxrec    
 
 """ PLOTS ALL SHAPES AND PARTS """
@@ -79,6 +81,7 @@ for shapeRec in sf.iterShapeRecords():
     if rec[4] != 'AK':
        R = 1
        G = (rec[fld_ndx]-minrec)/(maxrec-minrec)
+       G = G * (G<=1) + 1.0 * (G>1.0)
        B = 0
     else: 
        R = 0
