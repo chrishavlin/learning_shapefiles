@@ -1,8 +1,8 @@
 """
-basic_read_polygons.py
+read_shp_and_rcrd.py
 
 reads a shapefile using the shapefile library, loops over imported shapes 
-and plots polygons for each shape
+and plots polygons for each shape, colored by record entry
 
 Plotting is configured for use with state boundary shapefile from census.gov: 
   https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
