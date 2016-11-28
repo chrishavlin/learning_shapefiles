@@ -106,7 +106,7 @@ elif shape == 'pacman_rough_eye':
    for itheta in range(len(theta)):
        ext.append((x[itheta],y[itheta]))
    
-   ext.append((0,0))    
+   ext.append((0,0)) # add 0 point 
 
    # build eyeball interior points
    theta=np.linspace(0,2*3.14,30)
@@ -131,7 +131,7 @@ fig = plt.figure()
 ax = fig.add_axes((0.1,0.1,0.8,0.8))
 
 # put the patch on the plot
-patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[1,1,1], alpha=1.0, zorder=2)
+patch = PolygonPatch(polygon, facecolor=[0,0,0.5], edgecolor=[1,1,1], alpha=1.0)
 ax.add_patch(patch)
 
 # new axes
