@@ -1,5 +1,5 @@
 """
-basic_read_polygons.py
+basic_readshp_plotpoly.py
 
 reads a shapefile using the shapefile library, loops over imported shapes 
 and plots polygons for each shape
