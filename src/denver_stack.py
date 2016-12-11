@@ -21,6 +21,7 @@ import shapefile
 import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon
+from shapely.geometry import Point
 from shapely.geometry import LineString
 from descartes.patch import PolygonPatch
 
@@ -51,10 +52,10 @@ fld_name='TREE_PCT'
 map_geoms=['highway']#,'highway','bridge','tunnel']
 
 plot_these_rec_vals=list()
-#plot_these_rec_vals.append('motorway')
+plot_these_rec_vals.append('motorway')
 plot_these_rec_vals.append('motorway_link')
-#plot_these_rec_vals.append('primary')
-#plot_these_rec_vals.append('secondary')
+plot_these_rec_vals.append('primary')
+plot_these_rec_vals.append('secondary')
 
 # loop over records, track global min/max
 
@@ -72,6 +73,22 @@ ymax=40.2
 xmin=-105.45
 xmax=-104.4
 
+
+# grid for bg coloring
+nx = 100
+x_o = np.linspace(xmin,xmax,nx)
+dy = abs(x_o[1]-x_o[2])
+y_o = np.linspace(ymin,ymax,int(abs(ymax-ymin)/dy))
+ny = len(y_o)
+Xg,Yg=np.meshgrid(x_o,y_o)
+GridPts = zip(Xg.ravel(), Yg.ravel())
+
+# distance to look for nearest neighbors
+dx = abs(xmax-xmin)/50.
+Dist = np.zeros((ny,nx))
+Dismin = 10*dx
+
+
 """ PLOTS ALL SHAPES AND PARTS """
 plt.figure()
 ax = plt.axes() # add the axes
@@ -80,10 +97,12 @@ ax.set_aspect('equal')
 shape_id = 0
 nshapes=len(sf.shapes())
 rec_vals=list()
+previous=0
 for shapeRec in sf.iterShapeRecords():
     # pull out shape geometry and records
     shape_id = shape_id+1
-    print shape_id, 'of', nshapes, '(', int(float(shape_id)/float(nshapes)*1000)/10,'%)'
+    pct_comp=float(int(float(shape_id)/float(nshapes)*10000))/100.
+    print shape_id, 'of', nshapes, '(', pct_comp,'% )'
     shape=shapeRec.shape 
     rec = shapeRec.record 
 
@@ -100,11 +119,28 @@ for shapeRec in sf.iterShapeRecords():
 
         if rec[field_names.index(mapg)] in plot_these_rec_vals:
             nparts = len(shape.parts) # total parts
+            Pts = Point(shape.points)
+
+            TestP=Point(Pts.representative_point())
+            Xsub = x_o[abs(x_o-TestP.x)<1.2*Dismin]
+            Ysub = y_o[abs(y_o-TestP.y)<1.2*Dismin]
+            Xg1,Yg1=np.meshgrid(Xsub,Ysub)
+            GridPts = zip(Xg1.ravel(), Yg1.ravel())
+            
+            for Pt in GridPts:
+                Dis = Pts.distance(Point(Pt))
+                Dist[y_o==Pt[1],x_o==Pt[0]]=Dist[y_o==Pt[1],x_o==Pt[0]]+float(Dis<Dismin)
+
+    #if np.remainder(pct_comp,5)==0 and abs(previous-pct_comp)>2.5:
+    #    plt.contourf(Xg,Yg,Dist,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
+    #    plt.show()
+    #    previous=pct_comp
+        
 
     if nparts == 1:
         Line = LineString(shape.points)
         x,y = Line.xy
-        ax.plot(x, y, color=[R,G,B], zorder=1)
+        ax.plot(x, y, color=[R,G,B], zorder=2)
 
     elif nparts > 0 : # loop over parts of each shape, plot separately
         for ip in range(nparts): # loop over parts, plot separately
@@ -117,8 +153,9 @@ for shapeRec in sf.iterShapeRecords():
             # build the polygon and add it to plot   
             Line = LineString(shape.points[i0:i1+1])
             x,y = Line.xy
-            ax.plot(x, y, color=[R,G,B],zorder=1)
+            ax.plot(x, y, color=[R,G,B],zorder=2)
 
+plt.contourf(Xg,Yg,Dist,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
 print 'record field names:',field_names
 print 'possible record values for ',map_geoms,':',rec_vals
 
@@ -174,7 +211,7 @@ for shapeRec in sf.iterShapeRecords():
     nparts = len(shape.parts) # total parts
     if nparts == 1:
         polygon = Polygon(shape.points)
-        patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B], alpha=alf, zorder=2)
+        patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B], alpha=alf, zorder=3)
         ax.add_patch(patch)
 
     else: # loop over parts of each shape, plot separately
@@ -187,7 +224,7 @@ for shapeRec in sf.iterShapeRecords():
 
             # build the polygon and add it to plot   
             polygon = Polygon(shape.points[i0:i1+1])
-            patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B],alpha=alf, zorder=2) 
+            patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B],alpha=alf, zorder=3) 
             ax.add_patch(patch)
 plt.xlim(xmin,xmax)
 plt.ylim(ymin,ymax)
