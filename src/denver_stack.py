@@ -75,18 +75,17 @@ xmax=-104.4
 
 
 # grid for bg coloring
-nx = 100
+nx = 200
 x_o = np.linspace(xmin,xmax,nx)
 dy = abs(x_o[1]-x_o[2])
 y_o = np.linspace(ymin,ymax,int(abs(ymax-ymin)/dy))
 ny = len(y_o)
 Xg,Yg=np.meshgrid(x_o,y_o)
-GridPts = zip(Xg.ravel(), Yg.ravel())
 
 # distance to look for nearest neighbors
-dx = abs(xmax-xmin)/50.
 Dist = np.zeros((ny,nx))
-Dismin = 10*dx
+dx = abs(x_o[1]-x_o[0])
+Dismin = abs(xmax-xmin)/5#4*dx
 
 
 """ PLOTS ALL SHAPES AND PARTS """
@@ -107,9 +106,9 @@ for shapeRec in sf.iterShapeRecords():
     rec = shapeRec.record 
 
     # select polygon facecolor RGB vals based on record value
-    R = 0.1
-    G = 0.1
-    B = 0.1
+    R = 0.81
+    G = 0.81
+    B = 0.81
 
     nparts = 0
     for mapg in map_geoms:
@@ -121,20 +120,32 @@ for shapeRec in sf.iterShapeRecords():
             nparts = len(shape.parts) # total parts
             Pts = Point(shape.points)
 
-            TestP=Point(Pts.representative_point())
-            Xsub = x_o[abs(x_o-TestP.x)<1.2*Dismin]
-            Ysub = y_o[abs(y_o-TestP.y)<1.2*Dismin]
+            Lin=LineString(shape.points)
+            Bounds=Lin.bounds #(minx, miny, maxx, maxy)
+            minx=Bounds[0]
+            miny=Bounds[1]
+            maxx=Bounds[2]
+            maxy=Bounds[3]
+            
+            Xsub = x_o[x_o>minx-Dismin]
+            Xsub = Xsub[Xsub<maxx+Dismin]
+            Ysub = y_o[y_o>miny-Dismin]
+            Ysub = Ysub[Ysub<maxy+Dismin]
             Xg1,Yg1=np.meshgrid(Xsub,Ysub)
             GridPts = zip(Xg1.ravel(), Yg1.ravel())
             
             for Pt in GridPts:
-                Dis = Pts.distance(Point(Pt))
-                Dist[y_o==Pt[1],x_o==Pt[0]]=Dist[y_o==Pt[1],x_o==Pt[0]]+float(Dis<Dismin)
+                Dis = 1.0/(Lin.distance(Point(Pt))+.01)
+                if Dis > Dist[y_o==Pt[1],x_o==Pt[0]]:
+                   Dist[y_o==Pt[1],x_o==Pt[0]]=Dis#float(Dis<Dismin)
 
-    #if np.remainder(pct_comp,5)==0 and abs(previous-pct_comp)>2.5:
-    #    plt.contourf(Xg,Yg,Dist,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
-    #    plt.show()
-    #    previous=pct_comp
+#    if np.remainder(pct_comp,5)==0 and abs(previous-pct_comp)>2.5:
+#        print np.max(Dist)
+#        PDist=Dist
+#        #plt.pcolormesh(Xg,Yg,PDist,linewidth=0,zorder=1,cmap=plt.get_cmap('copper'))
+#        plt.contourf(Xg,Yg,PDist,60,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
+#        plt.show()
+#        previous=pct_comp
         
 
     if nparts == 1:
@@ -155,7 +166,6 @@ for shapeRec in sf.iterShapeRecords():
             x,y = Line.xy
             ax.plot(x, y, color=[R,G,B],zorder=2)
 
-plt.contourf(Xg,Yg,Dist,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
 print 'record field names:',field_names
 print 'possible record values for ',map_geoms,':',rec_vals
 
@@ -226,6 +236,10 @@ for shapeRec in sf.iterShapeRecords():
             polygon = Polygon(shape.points[i0:i1+1])
             patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B],alpha=alf, zorder=3) 
             ax.add_patch(patch)
+
+
+plt.contourf(Xg,Yg,Dist,100,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
+
 plt.xlim(xmin,xmax)
 plt.ylim(ymin,ymax)
 plt.show()
