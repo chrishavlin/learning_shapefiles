@@ -1,10 +1,14 @@
 """
 denver_stack.py
 
-reads a shapefile using the shapefile library, loops over imported shapes 
-and plots polygons for each shape, colored by record entry
+plots inverse distance to primary and secondary roadways of a custom MapZen extraction
+of OpenStreetMap data for metro Denver. 
 
-Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
+Data Copyright:
+Powered by MapZen (https://mapzen.com), Attribution: https://www.mapzen.com/rights
+Data © OpenStreetMaps (OSM) contributors: https://openstreetmap.org/copyright
+
+Code Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -28,27 +32,19 @@ from descartes.patch import PolygonPatch
 """
  IMPORT THE SHAPEFILE 
 """
-#shp_file_base='denver_tree_canopy_2013'
-#dat_dir='../shapefiles/'+shp_file_base +'/'
-#sf = shapefile.Reader(dat_dir+shp_file_base)
 
 shp_file_base='ex_QMDJXT8DzmqNh6eFiNkAuESyDNCX_osm_line'
 dat_dir='../shapefiles/denver_maps/grouped_by_geometry_type/'
 sf = shapefile.Reader(dat_dir+shp_file_base)
 print 'number of shapes imported:',len(sf.shapes())
 
-
 """
        PLOTTING
 """
-
-"""    Find max/min of record of interest (for scaling the facecolor)"""
-
 # get list of field names, pull out appropriate index
 fld = sf.fields[1:]
 field_names = [field[0] for field in fld]
 print 'record field names:',field_names
-fld_name='TREE_PCT'
 map_geoms=['highway']#,'highway','bridge','tunnel']
 
 plot_these_rec_vals=list()
@@ -57,25 +53,13 @@ plot_these_rec_vals.append('motorway_link')
 plot_these_rec_vals.append('primary')
 plot_these_rec_vals.append('secondary')
 
-# loop over records, track global min/max
-
-# exclude shapes outside bounds:
-
-# for downtown zoom:
-ymin=39.65
-ymax=39.79
-xmin=-105.05
-xmax=-104.9
-
-# wider view:
+# grid for bg coloring
 ymin=39.
 ymax=40.2
 xmin=-105.45
 xmax=-104.4
-
-
-# grid for bg coloring
 nx = 200
+
 x_o = np.linspace(xmin,xmax,nx)
 dy = abs(x_o[1]-x_o[2])
 y_o = np.linspace(ymin,ymax,int(abs(ymax-ymin)/dy))
@@ -85,8 +69,7 @@ Xg,Yg=np.meshgrid(x_o,y_o)
 # distance to look for nearest neighbors
 Dist = np.zeros((ny,nx))
 dx = abs(x_o[1]-x_o[0])
-Dismin = abs(xmax-xmin)/5#4*dx
-
+Dismin = abs(xmax-xmin)/20#4*dx
 
 """ PLOTS ALL SHAPES AND PARTS """
 plt.figure()
@@ -139,15 +122,6 @@ for shapeRec in sf.iterShapeRecords():
                 if Dis > Dist[y_o==Pt[1],x_o==Pt[0]]:
                    Dist[y_o==Pt[1],x_o==Pt[0]]=Dis#float(Dis<Dismin)
 
-#    if np.remainder(pct_comp,5)==0 and abs(previous-pct_comp)>2.5:
-#        print np.max(Dist)
-#        PDist=Dist
-#        #plt.pcolormesh(Xg,Yg,PDist,linewidth=0,zorder=1,cmap=plt.get_cmap('copper'))
-#        plt.contourf(Xg,Yg,PDist,60,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
-#        plt.show()
-#        previous=pct_comp
-        
-
     if nparts == 1:
         Line = LineString(shape.points)
         x,y = Line.xy
@@ -168,75 +142,6 @@ for shapeRec in sf.iterShapeRecords():
 
 print 'record field names:',field_names
 print 'possible record values for ',map_geoms,':',rec_vals
-
-"""
- IMPORT THE SHAPEFILE 
-"""
-shp_file_base='denver_tree_canopy_2013'
-dat_dir='../shapefiles/'+shp_file_base +'/'
-sf = shapefile.Reader(dat_dir+shp_file_base)
-
-"""    Find max/min of record of interest (for scaling the facecolor)"""
-
-# get list of field names, pull out appropriate index
-fld = sf.fields[1:]
-field_names = [field[0] for field in fld]
-print 'record field names:',field_names
-fld_name='TREE_PCT'
-ndx1=field_names.index(fld_name)
-
-# loop over records, track global min/max
-# exclude shapes outside bounds:
-maxrec=-9999
-minrec=1e21
-for shapeRec in sf.iterShapeRecords():
-       shape=shapeRec.shape
-       
-       if shape.bbox[0]>xmin or shape.bbox[2]>xmin:       
-          if shape.bbox[0]<xmax:
-             if shape.bbox[1]>ymin or shape.bbox[3]>ymin:       
-                if shape.bbox[1]<ymax:
-                   rec=shapeRec.record
-                   maxrec=np.max((maxrec,rec[ndx1]))
-                   minrec=np.min((minrec,rec[ndx1]))
-
-print 'min:',minrec,'max:',maxrec
-
-""" PLOTS ALL SHAPES AND PARTS """
-for shapeRec in sf.iterShapeRecords():
-    # pull out shape geometry and records
-    shape=shapeRec.shape 
-    rec = shapeRec.record 
-
-    # select polygon facecolor RGB vals based on record value
-    R = 0.
-    G = 0.1+0.9*(rec[ndx1]-minrec)/(maxrec-minrec)
-    G = G * (G < 1.0) * (G > 0) + 1.0 * (G>1.0)
-    G = G * (G >= 0.1) + 0.1 * (G < 0.1)
-    B = 0.
-
-    alf = 0.9
-
-    # check number of parts (could use MultiPolygon class of shapely?)
-    nparts = len(shape.parts) # total parts
-    if nparts == 1:
-        polygon = Polygon(shape.points)
-        patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B], alpha=alf, zorder=3)
-        ax.add_patch(patch)
-
-    else: # loop over parts of each shape, plot separately
-        for ip in range(nparts): # loop over parts, plot separately
-            i0=shape.parts[ip]
-            if ip < nparts-1:
-               i1 = shape.parts[ip+1]-1
-            else:
-               i1 = len(shape.points)
-
-            # build the polygon and add it to plot   
-            polygon = Polygon(shape.points[i0:i1+1])
-            patch = PolygonPatch(polygon, facecolor=[R,G,B], edgecolor=[R,G,B],alpha=alf, zorder=3) 
-            ax.add_patch(patch)
-
 
 plt.contourf(Xg,Yg,Dist,100,linewidths=None,zorder=1,cmap=plt.get_cmap('copper'))
 

@@ -4,6 +4,8 @@ denver_tree_canopy.py
 reads a shapefile using the shapefile library, loops over imported shapes 
 and plots polygons for each shape, colored by record entry
 
+Data Copyright: Denver Open Data Catalog https://www.denvergov.org/opendata
+
 Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +51,6 @@ ndx1=field_names.index(fld_name)
 # loop over records, track global min/max
 
 # exclude shapes outside bounds:
-
 # for downtown zoom:
 ymin=39.65
 ymax=39.79
