@@ -57,18 +57,20 @@ class field_description(object):
           field_names = [field[0] for field in fld]
           nshapes=len(sf.shapes())
 
-          rec_vals=list()
+          self.rec_vals=list()
 
+          shape_id = 0
+
+          print 'Finding unique record values for',self.fieldname
           for rec in sf.iterRecords():
               # pull out shape geometry and records
               shape_id += 1
               pct_comp=float(int(float(shape_id)/float(nshapes)*10000))/100.
               print shape_id, 'of', nshapes, '(', pct_comp,'% )'
 
-              rec = shapeRec.record 
-              if rec[field_names.index(self.field_name)] not in rec_vals:
-                 print rec[field_names.index(self.field_name)]
-                 rec_vals.append(rec[field_names.index(field_name)])
+              if rec[field_names.index(self.fieldname)] not in self.rec_vals:
+                 print "  new record value: rec[field_names.index(self.fieldname)]"
+                 self.rec_vals.append(rec[field_names.index(self.fieldname)])
  
 if __name__ == '__main__':
    shp_file_base='ex_QMDJXT8DzmqNh6eFiNkAuESyDNCX_osm_line'
@@ -85,4 +87,7 @@ if __name__ == '__main__':
    field_obj.get_field_type(sf)
    print field_obj.field_type
 
+   field_obj.get_unique_rec_values(sf)
+   print len(field_obj.rec_vals)
+   print field_obj.rec_vals
 
