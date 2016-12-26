@@ -29,7 +29,7 @@ class field_description(object):
       def __init__(self,name):
           self.fieldname=name
       
-      def inspect_field(self,sf):
+      def get_field_type(self,sf):
           """ self -- the object
               sf -- the shapefile object of interest """
 
@@ -40,9 +40,7 @@ class field_description(object):
           # pull out info 
           nshapes=len(sf.shapes())
 
-          # loop over shapefile records, recording possible values
-          # of a field, based on field value type.
-
+          # find the data type of the field
           self.field_type=None
           shapeid=0
           while not self.field_type and shapeid < nshapes-1:
@@ -51,6 +49,19 @@ class field_description(object):
                    self.field_type=type(rec) 
                 shapeid += 1
                 
+          print self.field_type
+
+   
+      def get_unique_rec_values(self,sf):
+          """
+          finds unique values of records
+          """
+          # self.field_type=self.field_type.strip("<")
+          # self.field_type=self.field_type.strip(">")
+          # loop over shapefile records, recording possible values
+          # of a field, based on field value type.
+          rec_vals=list()
+
           # test record to get type
 
 if __name__ == '__main__':
