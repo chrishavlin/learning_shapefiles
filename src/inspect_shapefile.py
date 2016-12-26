@@ -36,8 +36,6 @@ class field_description(object):
           # pull out the fields
           fld = sf.fields[1:]
           field_names = [field[0] for field in fld]
-
-          # pull out info 
           nshapes=len(sf.shapes())
 
           # find the data type of the field
@@ -48,22 +46,30 @@ class field_description(object):
                 if rec:
                    self.field_type=type(rec) 
                 shapeid += 1
-                
-          print self.field_type
-
    
       def get_unique_rec_values(self,sf):
           """
           finds unique values of records
           """
-          # self.field_type=self.field_type.strip("<")
-          # self.field_type=self.field_type.strip(">")
-          # loop over shapefile records, recording possible values
-          # of a field, based on field value type.
+
+          # pull out the fields
+          fld = sf.fields[1:]
+          field_names = [field[0] for field in fld]
+          nshapes=len(sf.shapes())
+
           rec_vals=list()
 
-          # test record to get type
+          for rec in sf.iterRecords():
+              # pull out shape geometry and records
+              shape_id += 1
+              pct_comp=float(int(float(shape_id)/float(nshapes)*10000))/100.
+              print shape_id, 'of', nshapes, '(', pct_comp,'% )'
 
+              rec = shapeRec.record 
+              if rec[field_names.index(self.field_name)] not in rec_vals:
+                 print rec[field_names.index(self.field_name)]
+                 rec_vals.append(rec[field_names.index(field_name)])
+ 
 if __name__ == '__main__':
    shp_file_base='ex_QMDJXT8DzmqNh6eFiNkAuESyDNCX_osm_line'
    dat_dir='../shapefiles/denver_maps/grouped_by_geometry_type/'
@@ -76,10 +82,7 @@ if __name__ == '__main__':
    field_obj=field_description(field_names[1]) 
    print field_obj.fieldname
 
-   field_obj.inspect_field(sf)
+   field_obj.get_field_type(sf)
    print field_obj.field_type
 
-        #if rec[field_names.index(mapg)] not in rec_vals:
-         #  print rec[field_names.index(mapg)]
-         #  rec_vals.append(rec[field_names.index(mapg)])
 
