@@ -77,21 +77,37 @@ if __name__ == '__main__':
    # set the shapefile
    shp_file_base='ex_QMDJXT8DzmqNh6eFiNkAuESyDNCX_osm_line'
    dat_dir='../shapefiles/denver_maps/grouped_by_geometry_type/'
+
+   user_path=raw_input("Do you want to enter the path to a shapefile? (Y/N) ")
+   print ' '
+   if user_path=="Y":
+      dat_dir=raw_input("Enter data directory (e.g., ../shapefiles/blah/): ")
+      shp_file_base=raw_input("Enter shapefile file name (without extension): ")
+   else:
+      print 'Using shapefile specified in __main__ :'
+      print 'directory: ',dat_dir
+      print 'filename: ',shp_file_base
+      
+
    #shp_file_base='denver_tree_canopy_2013'
    #dat_dir='../shapefiles/denver_tree_canopy_2013/'
 
 
    # load the shapefile
+   print ' '
    print 'Loading shapefile ...'
    sf = shapefile.Reader(dat_dir+shp_file_base)
    print '... shapefile loaded!'
+   print ' '
 
    # pull out the fields
    fld = sf.fields[1:]
    field_names = [field[0] for field in fld]
    print 'Shapefile has the following field names'
    print field_names
-   field_of_interest=raw_input("Enter field name to investigate ")
+   print ' '
+   field_of_interest=raw_input("Enter field name to investigate: ")
+   print ' '
 
    # process the shapefile
    field_obj=field_description(field_of_interest) # store field name 
@@ -101,6 +117,7 @@ if __name__ == '__main__':
    print '---------------------------------------'
    print 'Shapefile has the following field names'
    print field_names
+   print ' '
    print 'The field name',field_obj.fieldname,' is ',field_obj.field_type
    print 'and has',len(field_obj.rec_vals),'unique values'
 
