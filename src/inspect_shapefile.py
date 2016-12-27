@@ -88,7 +88,7 @@ if __name__ == '__main__':
    print '---------------------------------------'
    print 'Shapefile has the following field names'
    print field_names
-   print 'The field name',field_obj.fieldname,field_obj.field_type
-   print 'has',len(field_obj.rec_vals),' possible values:'
+   print 'The field name',field_obj.fieldname,' is ',field_obj.field_type
+   print 'and has',len(field_obj.rec_vals),' possible values:'
    print field_obj.rec_vals
 
