@@ -18,6 +18,7 @@ Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
 
 """
 import shapefile
+import xml.etree.cElementTree as ET
 
 """
  IMPORT THE SHAPEFILE 
@@ -72,6 +73,21 @@ class field_description(object):
                  print "  new record value:",rec[field_names.index(self.fieldname)]
                  self.rec_vals.append(rec[field_names.index(self.fieldname)])
  
+def create_xml_file(sf,savedir,basename):
+    metadata = ET.Element("metadata")
+    eainfo = ET.SubElement(metadata, "eainfo")
+    detailed = ET.SubElement(eainfo,"detailed",name=basename)
+    attr = ET.SubElement(detailed,"attr")
+    
+    ET.SubElement(attr, "attrlbl").text = "label"
+    ET.SubElement(attr, "attrtype").text = "type"
+    # if string with small number of types
+    ET.SubElement(attr, "attrrange").text = "range"
+    # if a number, just use min/max 
+    
+    tree = ET.ElementTree(metadata)
+    tree.write(savedir+basename+"_auto.xml")
+
 if __name__ == '__main__':
 
    # set the shapefile
@@ -125,4 +141,7 @@ if __name__ == '__main__':
    if Y_N=='Y':
       print ' possible values:'
       print field_obj.rec_vals
+
+   if raw_input("Create XML file? (Y/N) ")=='Y':
+      create_xml_file(sf,dat_dir,shp_file_base)
 
