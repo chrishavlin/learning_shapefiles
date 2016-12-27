@@ -18,8 +18,6 @@ Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
 
 """
 import shapefile
-import numpy as np
-import matplotlib.pyplot as plt
 
 """
  IMPORT THE SHAPEFILE 
@@ -82,12 +80,15 @@ if __name__ == '__main__':
    field_names = [field[0] for field in fld]
 
    field_obj=field_description(field_names[1]) 
-   print field_obj.fieldname
 
    field_obj.get_field_type(sf)
-   print field_obj.field_type
 
    field_obj.get_unique_rec_values(sf)
-   print len(field_obj.rec_vals)
+
+   print '---------------------------------------'
+   print 'Shapefile has the following field names'
+   print field_names
+   print 'The field name',field_obj.fieldname,field_obj.field_type
+   print 'has',len(field_obj.rec_vals),' possible values:'
    print field_obj.rec_vals
 
