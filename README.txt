@@ -1,4 +1,4 @@
-Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
+Copyright (C) 2018  Chris Havlin, <https://chrishavlin.wordpress.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,21 +15,21 @@ Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
 
 DESCRIPTION
 
-   This is a collection of scripts for learning to work with shapefiles in python, 
-   assumining no previous knowledge (of either shapefiles or the python libraries 
-   used in manipulating them). 
+   This is a collection of scripts for learning to work with shapefiles in python,
+   assumining no previous knowledge (of either shapefiles or the python libraries
+   used in manipulating them).
 
-   Uses U.S. state boundary shapefile from census.gov as the sample shapefile: 
+   Uses U.S. state boundary shapefile from census.gov as the sample shapefile:
         https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
-   The 20m shapefile (cb_2015_us_state_20m.zip) is the easiest to start with. 
+   The 20m shapefile (cb_2015_us_state_20m.zip) is the easiest to start with.
    Shapefile not included in package.
 
    shape_testing/src/ includes a number of python scripts, tested with python 2.7:
 
-        basic_read_and_plot.py -- simplest possible script, just reads and plots a 
-                                  shapefile in various ways. 
+        basic_read_and_plot.py -- simplest possible script, just reads and plots a
+                                  shapefile in various ways.
 
-   The documentation for pyshp is very useful: 
+   The documentation for pyshp is very useful:
        https://pypi.python.org/pypi/pyshp
 
 REQUIRED PYTHON LIBRARIES
@@ -41,24 +41,27 @@ REQUIRED PYTHON LIBRARIES
 QUICK START
    1. Download and unzip a shapefile from:
       https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
-      other shapefiles will work, but you'll have to change the  plot axes limits 
+      other shapefiles will work, but you'll have to change the  plot axes limits
       appropriately for your shapefile
-   2. edit dat_dir and shp_file_base in the scripts to reflect the directory 
-      and shapefile name. 
-   3. run basic_read_plot.py from a terminal window: 
+   2. edit dat_dir and shp_file_base in the scripts to reflect the directory
+      and shapefile name.
+   3. run basic_read_plot.py from a terminal window:
            $ cd /path/to/learning_shapefiles/src/
            $ python basic_read_plot.py
 CONTENTS
-   scripts in src/ include: 
+   scripts in src/ include:
 
    basic_read_plot.py
-         reads a shapefile, plots outlines of geometry 
-   basic_readshp_plotpoly.py 
+         reads a shapefile, plots outlines of geometry
+   basic_readshp_plotpoly.py
          reads a shapefile, plots geometry using polygons
    simple_polygons.py
          plots several simple polygons
    read_shp_and_rcrd.py
-         reads a shapefile, plots geometry using polygons colored 
-         by record values. The record indexing is specific to the 
+         reads a shapefile, plots geometry using polygons colored
+         by record values. The record indexing is specific to the
          census.gov State Boundaries shapefile.
-
+   colorado_plateau.py
+         reads the shapefile from Fenneman and Johnson (1946), pulls out
+         Colorado Plateau shapes and generates a single shape for the full
+         physiographic boundary of the Colorado Plateau.
