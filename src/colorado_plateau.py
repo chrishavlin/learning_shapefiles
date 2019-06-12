@@ -68,8 +68,9 @@ for rec in sf.records():
 plt.subplot(1,2,1)
 for rec in recs_to_plot:
     pts=sf.shapes()[rec].points
-    for lon,lat in pts:
-        plt.plot(lon,lat,'.k')
+    lons=[pt[0] for pt in pts]
+    lats=[pt[1] for pt in pts]
+    plt.plot(lons,lats,'.k')
 
 # create a single shape for Colorado Plateau from union of sub-shapes
 polies=[]
