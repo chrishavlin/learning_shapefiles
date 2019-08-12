@@ -1,10 +1,10 @@
 """
 basic_readshp_plotpoly.py
 
-reads a shapefile using the shapefile library, loops over imported shapes 
+reads a shapefile using the shapefile library, loops over imported shapes
 and plots polygons for each shape
 
-Plotting is configured for use with state boundary shapefile from census.gov: 
+Plotting is configured for use with state boundary shapefile from census.gov:
   https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
 
 Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
@@ -27,10 +27,10 @@ from shapely.geometry import Polygon
 from descartes.patch import PolygonPatch
 
 """
- IMPORT THE SHAPEFILE 
+ IMPORT THE SHAPEFILE
 """
-shp_file_base='cb_2015_us_state_20m'
-dat_dir='../shapefiles/'+shp_file_base +'/'
+shp_file_base='cb_2018_us_state_20m'
+dat_dir='../data/'+shp_file_base +'/'
 sf = shapefile.Reader(dat_dir+shp_file_base)
 
 print 'number of shapes imported:',len(sf.shapes())
@@ -49,7 +49,7 @@ plt.figure()
 ax = plt.axes()
 ax.set_aspect('equal')
 
-shape_ex = sf.shape(5) # could break if selected shape has multiple polygons. 
+shape_ex = sf.shape(5) # could break if selected shape has multiple polygons.
 
 # build the polygon from exterior points
 polygon = Polygon(shape_ex.points)
@@ -70,8 +70,8 @@ for shape in list(sf.iterShapes()):
 
     # define polygon fill color (facecolor) RGB values:
     R = (float(icolor)-1.0)/52.0
-    G = 0 
-    B = 0 
+    G = 0
+    B = 0
 
     # check number of parts (could use MultiPolygon class of shapely?)
     nparts = len(shape.parts) # total parts
@@ -87,7 +87,7 @@ for shape in list(sf.iterShapes()):
                i1 = shape.parts[ip+1]-1
             else:
                i1 = len(shape.points)
-            
+
             polygon = Polygon(shape.points[i0:i1+1])
             patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
             ax.add_patch(patch)
@@ -97,4 +97,3 @@ for shape in list(sf.iterShapes()):
 plt.xlim(-130,-60)
 plt.ylim(23,50)
 plt.show()
-

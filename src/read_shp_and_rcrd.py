@@ -1,10 +1,10 @@
 """
 read_shp_and_rcrd.py
 
-reads a shapefile using the shapefile library, loops over imported shapes 
+reads a shapefile using the shapefile library, loops over imported shapes
 and plots polygons for each shape, colored by record entry
 
-Plotting is configured for use with state boundary shapefile from census.gov: 
+Plotting is configured for use with state boundary shapefile from census.gov:
   https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
 
 Copyright (C) 2016  Chris Havlin, <https://chrishavlin.wordpress.com>
@@ -27,10 +27,10 @@ from shapely.geometry import Polygon
 from descartes.patch import PolygonPatch
 
 """
- IMPORT THE SHAPEFILE 
+ IMPORT THE SHAPEFILE
 """
-shp_file_base='cb_2015_us_state_20m'
-dat_dir='../shapefiles/'+shp_file_base +'/'
+shp_file_base='cb_2018_us_state_20m'
+dat_dir='../data/'+shp_file_base +'/'
 sf = shapefile.Reader(dat_dir+shp_file_base)
 
 print 'number of shapes imported:',len(sf.shapes())
@@ -65,7 +65,7 @@ for rec in sf.iterRecords():
 
 maxrec=maxrec/2.0 # upper saturation limit
 
-print fld_name,'min:',minrec,'max:',maxrec    
+print fld_name,'min:',minrec,'max:',maxrec
 
 """ PLOTS ALL SHAPES AND PARTS """
 plt.figure()
@@ -74,8 +74,8 @@ ax.set_aspect('equal')
 
 for shapeRec in sf.iterShapeRecords():
     # pull out shape geometry and records
-    shape=shapeRec.shape 
-    rec = shapeRec.record 
+    shape=shapeRec.shape
+    rec = shapeRec.record
 
     # select polygon facecolor RGB vals based on record value
     if rec[4] != 'AK':
@@ -83,10 +83,10 @@ for shapeRec in sf.iterShapeRecords():
        G = (rec[fld_ndx]-minrec)/(maxrec-minrec)
        G = G * (G<=1) + 1.0 * (G>1.0)
        B = 0
-    else: 
+    else:
        R = 0
-       B = 0 
-       G = 0 
+       B = 0
+       G = 0
 
     # check number of parts (could use MultiPolygon class of shapely?)
     nparts = len(shape.parts) # total parts
@@ -103,7 +103,7 @@ for shapeRec in sf.iterShapeRecords():
             else:
                i1 = len(shape.points)
 
-            # build the polygon and add it to plot   
+            # build the polygon and add it to plot
             polygon = Polygon(shape.points[i0:i1+1])
             patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
             ax.add_patch(patch)
@@ -111,4 +111,3 @@ for shapeRec in sf.iterShapeRecords():
 plt.xlim(-130,-60)
 plt.ylim(23,50)
 plt.show()
-
