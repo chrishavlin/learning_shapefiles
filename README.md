@@ -18,7 +18,7 @@ The documentation for pyshp is very useful: https://pypi.python.org/pypi/pyshp
 
   * python (2.xx or 3.xx should work)
   * general libraries: numpy, matplotlib, pandas
-  * for reading shapefiles: pyshp
+  * for reading/writing shapefiles: pyshp or fiona (depending on script)
   * for scripts with polygons: shapely, descartes
 
 `colorado_plateau.py` uses a shapefile from  Fenneman and Johnson (1946): see comments for where to download it.
@@ -32,3 +32,4 @@ scripts in `src/` include:
   * **read_shp_and_rcrd.py**: reads a shapefile, plots geometry using polygons colored by record values. The record indexing is specific to the census.gov State Boundaries shapefile.
   * **colorado_plateau.py**: reads the shapefile from Fenneman and Johnson (1946), pulls out Colorado Plateau shapes and generates a single shape for the full physiographic boundary of the Colorado Plateau.
   * **affine_expansion.py**: reads a CSV of lat/lon coords for a polygon and scales the shape by specified amounts.
+  * **contourf_to_shp.py**: converts contourf levels into polygons, saves to shape file 
