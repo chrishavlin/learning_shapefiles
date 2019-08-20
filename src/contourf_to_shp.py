@@ -59,14 +59,11 @@ for col in cs.collections:
         for ncp,cp in enumerate(contour_path.to_polygons()):
             lons = cp[:,0]
             lats = cp[:,1]
-            new_shape = geometry.Polygon([(i[0], i[1]) for i in zip(lons,lats)])
+            new_shape = geometry.Polygon([(i[0], i[1]) for i in zip(lons,lats)])            
             if ncp == 0:
-                # first shape
-                poly = new_shape
+                poly = new_shape # first shape
             else:
-                # Remove the holes if there are any
-                poly = poly.difference(new_shape)
-                # Can also be left out if you want to include all rings
+                poly = poly.difference(new_shape) # Remove the holes
         PolyList.append({'poly':poly,'props':{'z': z}})
 
 ## write the fiona collection
